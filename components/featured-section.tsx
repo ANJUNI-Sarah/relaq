@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Homepage_list_response } from "@/generated/types"
 
 export async function FeaturedSection({ articles }: { articles: Homepage_list_response['articles'] }) {
-  
   return (
     <section>
       <h2 className="text-xl font-semibold mb-4">最熱話題！</h2>

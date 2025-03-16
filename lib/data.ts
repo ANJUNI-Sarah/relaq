@@ -21,7 +21,9 @@ export async function fetchShopData(
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+    return data.data;
 }
 
 export async function fetchShopDataList(
@@ -36,7 +38,9 @@ export async function fetchShopDataList(
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+    return data.data;
 }
 
 // 取得首頁資料
@@ -49,7 +53,9 @@ export async function fetchHomeData(): Promise<Homepage_list_response> {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+    return data.data;
 }
 
 // 取文章列表
@@ -64,6 +70,7 @@ export async function fetchArticleList(
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
 
-    return response.json();
+    return data.data;
 }

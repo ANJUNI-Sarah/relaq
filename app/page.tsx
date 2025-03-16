@@ -4,11 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetchHomeData } from "@/lib/data";
 
 export default async function Home() {
-  // const homeData = await fetchHomeData();
-  let homeData = {
-    banner: '/banner.webp',
-    articles: [],
-  }
+  const homeData = await fetchHomeData();
+  
   return (
     <div className="w-full py-6 space-y-8">
       

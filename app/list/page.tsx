@@ -27,7 +27,7 @@ export default async function ListPage(
     keyword: decodedParams.keyword,
   };
 
-  // const data = await fetchShopDataList(payload);
+  const data = await fetchShopDataList(payload);
 
   return (
     <div className="container">
@@ -35,9 +35,9 @@ export default async function ListPage(
         <SearchFilters searchValue={decodedParams} />
       </div>
       <main className="flex-1 p-4">
-        {/* {data.map((shop) => (
+        {data.map((shop) => (
           <ShopCard key={shop.id} {...shop} />
-        ))} */}
+        ))}
       </main>
     </div>
   )
