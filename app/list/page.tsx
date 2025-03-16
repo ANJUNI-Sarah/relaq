@@ -1,21 +1,43 @@
-import SidebarFilters  from "@/components/sider-filter"
 import { ShopCard } from "@/components/shop-card"
 import { SearchFilters } from '@/components/search-filters';
+import { fetchShopDataList } from '@/lib/data';
+import { redirect } from 'next/navigation';
 
-export default function ListPage() {
+export default async function ListPage(
+  {
+    searchParams,
+  }: {
+    searchParams: {
+      q?: string;
+    };
+  }
+) {
+
+  // 如果沒有 q 參數，則跳轉到首頁
+  if (!searchParams.q) {
+    redirect('/');
+  }
+
+  const decodedParams = JSON.parse(decodeURIComponent(atob(searchParams.q)));
+  const payload = {
+    city: decodedParams.city,
+    township: decodedParams.township,
+    price_min: parseInt(decodedParams.price_min) || 0,
+    price_max: parseInt(decodedParams.price_max) || 1000000,
+    keyword: decodedParams.keyword,
+  };
+
+  // const data = await fetchShopDataList(payload);
+
   return (
     <div className="container">
-
-        <aside className="w-64 bg-gray-100 p-4 lg:block hidden">
-          <SidebarFilters />
-        </aside>
-
-        <div className="w-full p-4 lg:hidden block">
-          <SearchFilters/>
-        </div>
-
+      <div className="w-full p-4">
+        <SearchFilters searchValue={decodedParams} />
+      </div>
       <main className="flex-1 p-4">
-        {/* 其他內容 */}
+        {/* {data.map((shop) => (
+          <ShopCard key={shop.id} {...shop} />
+        ))} */}
       </main>
     </div>
   )

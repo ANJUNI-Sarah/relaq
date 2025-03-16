@@ -1,8 +1,14 @@
 import { SearchFilters } from "@/components/search-filters"
 import { FeaturedSection } from "@/components/featured-section"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { fetchHomeData } from "@/lib/data";
 
-export default function Home() {
+export default async function Home() {
+  // const homeData = await fetchHomeData();
+  let homeData = {
+    banner: '/banner.webp',
+    articles: [],
+  }
   return (
     <div className="w-full py-6 space-y-8">
       
@@ -11,12 +17,12 @@ export default function Home() {
           <TabsTrigger value="nails">美甲</TabsTrigger>
           <TabsTrigger value="hair">美髮</TabsTrigger>
         </TabsList>
-        <SearchFilters isBanner/>
+        <SearchFilters isBanner={true} bannerImage={homeData.banner}/>
         <TabsContent value="nails" className="mx-8">
-          <FeaturedSection />
+          <FeaturedSection articles={homeData.articles}/>
         </TabsContent>
         <TabsContent value="hair" className="mx-8">
-          <FeaturedSection />
+          <FeaturedSection articles={homeData.articles}/>
         </TabsContent>
       </Tabs>
     </div>
