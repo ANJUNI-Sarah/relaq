@@ -101,7 +101,7 @@ function resolveSchemaRef(schema, openapi3Json) {
 }
 
 // 生成 TypeScript 類型定義
-function generateTypeDefinition(schema, openapi3Json) {
+function generateTypeDefinition(schema, openapi3Json, typeName = "") {
     if (!schema) {
         console.error("Schema 未定義");
         process.exit(1);
@@ -136,11 +136,22 @@ function generateTypeDefinition(schema, openapi3Json) {
     }
 
     if (resolvedSchema.type === "array") {
+        // 如果是陣列類型，且有類型名稱
+        if (typeName && resolvedSchema.items.type === "object") {
+            const singularName = typeName
+                .replace(/_response$/, "")
+                .replace(/_list.*$/, "");
+            const itemType = generateTypeDefinition(
+                resolvedSchema.items,
+                openapi3Json
+            );
+            return `${singularName}[]`;
+        }
         const itemType = generateTypeDefinition(
             resolvedSchema.items,
             openapi3Json
         );
-        return `${itemType}[]`;
+        return `${itemType}[] const `;
     }
 
     // 基本類型映射
@@ -257,19 +268,59 @@ async function generateTypes() {
                             operation.responses["200"].content[
                                 "application/json"
                             ].schema;
-                        const typeDefinition = generateTypeDefinition(
-                            responseSchema,
-                            openapi3Json
-                        );
-                        const responseContent = `// 由 api-gen.js 生成
+                        const typeName = `${capitalizeFirstLetter(
+                            operationId
+                        )}_response`;
+
+                        // 檢查是否為陣列類型且包含對象
+                        if (
+                            responseSchema.type === "array" &&
+                            responseSchema.items.type === "object"
+                        ) {
+                            const singularName = operationId.replace(
+                                /_list.*$/,
+                                ""
+                            );
+                            const capitalizedSingularName =
+                                capitalizeFirstLetter(singularName);
+                            const itemTypeDefinition = generateTypeDefinition(
+                                responseSchema.items,
+                                openapi3Json
+                            );
+
+                            const responseContent = `// 由 api-gen.js 生成
 // 請勿手動編輯此檔案
 
-export type ${capitalizeFirstLetter(operationId)}_response = ${typeDefinition};
+export type ${capitalizedSingularName} = ${itemTypeDefinition};
+
+export type ${typeName} = ${capitalizedSingularName}[];
 `;
-                        fs.writeFileSync(
-                            path.join(TYPES_DIR, `${operationId}_response.ts`),
-                            responseContent
-                        );
+                            fs.writeFileSync(
+                                path.join(
+                                    TYPES_DIR,
+                                    `${operationId}_response.ts`
+                                ),
+                                responseContent
+                            );
+                        } else {
+                            const typeDefinition = generateTypeDefinition(
+                                responseSchema,
+                                openapi3Json,
+                                typeName
+                            );
+                            const responseContent = `// 由 api-gen.js 生成
+// 請勿手動編輯此檔案
+
+export type ${typeName} = ${typeDefinition};
+`;
+                            fs.writeFileSync(
+                                path.join(
+                                    TYPES_DIR,
+                                    `${operationId}_response.ts`
+                                ),
+                                responseContent
+                            );
+                        }
                     }
 
                     // 生成請求類型文件
@@ -317,7 +368,7 @@ ${Object.entries(pathMapping)
         ([operationId, { method }]) =>
             `    ${operationId.toUpperCase()}: "${method.toUpperCase()}",`
     )
-    .join("\n")}
+    .join("\n")}    
 } as const;
 `;
 
@@ -333,20 +384,45 @@ ${Object.keys(pathMapping)
         const hasRequest = fs.existsSync(
             path.join(TYPES_DIR, `${operationId}_request.ts`)
         );
-        return [
-            hasResponse
-                ? `export type { ${capitalizeFirstLetter(
-                      operationId
-                  )}_response } from './${operationId}_response';`
-                : "",
-            hasRequest
-                ? `export type { ${capitalizeFirstLetter(
-                      operationId
-                  )}_request } from './${operationId}_request';`
-                : "",
-        ]
-            .filter(Boolean)
-            .join("\n");
+
+        // 檢查是否為列表類型的響應
+        const operation = pathMapping[operationId].operation;
+        const responseSchema =
+            operation.responses?.["200"]?.content?.["application/json"]?.schema;
+        const isArrayResponse =
+            responseSchema?.type === "array" &&
+            responseSchema.items.type === "object";
+
+        const exports = [];
+
+        if (hasResponse) {
+            if (isArrayResponse) {
+                const singularName = operationId.replace(/_list.*$/, "");
+                const capitalizedSingularName =
+                    capitalizeFirstLetter(singularName);
+                exports.push(
+                    `export type { ${capitalizedSingularName}, ${capitalizeFirstLetter(
+                        operationId
+                    )}_response } from './${operationId}_response';`
+                );
+            } else {
+                exports.push(
+                    `export type { ${capitalizeFirstLetter(
+                        operationId
+                    )}_response } from './${operationId}_response';`
+                );
+            }
+        }
+
+        if (hasRequest) {
+            exports.push(
+                `export type { ${capitalizeFirstLetter(
+                    operationId
+                )}_request } from './${operationId}_request';`
+            );
+        }
+
+        return exports.join("\n");
     })
     .filter(Boolean)
     .join("\n")}

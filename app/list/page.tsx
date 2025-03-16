@@ -28,6 +28,7 @@ export default async function ListPage(
   };
 
   const data = await fetchShopDataList(payload);
+  console.log("data", data); 
 
   return (
     <div className="container">
@@ -36,7 +37,7 @@ export default async function ListPage(
       </div>
       <main className="flex-1 p-4">
         {data.map((shop) => (
-          <ShopCard key={shop.id} {...shop} />
+          <ShopCard key={shop.id} shop={shop} />
         ))}
       </main>
     </div>

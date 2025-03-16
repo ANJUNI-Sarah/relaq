@@ -15,5 +15,5 @@ export const API_METHODS = {
     ARTICLE_LIST_CREATE: "POST",
     HOMEPAGE_LIST: "GET",
     SHOP_CREATE: "POST",
-    SHOP_LIST_CREATE: "POST",
+    SHOP_LIST_CREATE: "POST",    
 } as const;

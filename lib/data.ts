@@ -12,8 +12,12 @@ import { PATHS, API_METHODS } from "@/generated/api";
 export async function fetchShopData(
     payload: Shop_create_request
 ): Promise<Shop_create_response> {
+    console.log("payload", payload);
     const response = await fetch(PATHS.SHOP_CREATE, {
         method: API_METHODS.SHOP_CREATE,
+        headers: {
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
     });
 
@@ -22,6 +26,7 @@ export async function fetchShopData(
     }
 
     const data = await response.json();
+    console.log("data", data);
 
     return data.data;
 }
@@ -29,8 +34,12 @@ export async function fetchShopData(
 export async function fetchShopDataList(
     payload: Shop_list_create_request
 ): Promise<Shop_list_create_response> {
+    console.log("payload", payload);
     const response = await fetch(PATHS.SHOP_LIST_CREATE, {
         method: API_METHODS.SHOP_LIST_CREATE,
+        headers: {
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
     });
 
@@ -39,6 +48,7 @@ export async function fetchShopDataList(
     }
 
     const data = await response.json();
+    console.log("data", data);
 
     return data.data;
 }
@@ -54,6 +64,7 @@ export async function fetchHomeData(): Promise<Homepage_list_response> {
     }
 
     const data = await response.json();
+    console.log("data", data);
 
     return data.data;
 }
@@ -71,6 +82,7 @@ export async function fetchArticleList(
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    console.log("data", data);
 
     return data.data;
 }
