@@ -40,7 +40,7 @@ export async function fetchShopDataList(
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({}),
     });
 
     if (!response.ok) {
@@ -57,6 +57,10 @@ export async function fetchShopDataList(
 export async function fetchHomeData(): Promise<Homepage_list_response> {
     const response = await fetch(PATHS.HOMEPAGE_LIST, {
         method: API_METHODS.HOMEPAGE_LIST,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
     });
 
     if (!response.ok) {
@@ -75,6 +79,9 @@ export async function fetchArticleList(
 ): Promise<Article_list_create_response> {
     const response = await fetch(PATHS.ARTICLE_LIST_CREATE, {
         method: API_METHODS.ARTICLE_LIST_CREATE,
+        headers: {
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
     });
 
@@ -83,6 +90,39 @@ export async function fetchArticleList(
     }
     const data = await response.json();
     console.log("data", data);
+
+    return data.data;
+}
+
+interface ShopListParams {
+    page: number;
+    page_size: number;
+    city: string | null | undefined;
+    township: string | null | undefined;
+    price_min: number | null | undefined;
+    price_max: number | null | undefined;
+    keyword: string | null | undefined;
+}
+
+export async function fetchShopList(params: ShopListParams) {
+    console.log("params", params);
+    const response = await fetch(`${PATHS.SHOP_LIST_CREATE}`, {
+        method: API_METHODS.SHOP_LIST_CREATE,
+        headers: {
+            "Content-Type": "application/json",
+            // Accept: "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+        body: JSON.stringify(params),
+    });
+
+    if (!response.ok) {
+        throw new Error("獲取商店列表失敗");
+    }
+
+    const data = await response.json();
 
     return data.data;
 }

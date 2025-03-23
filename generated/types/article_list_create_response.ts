@@ -7,4 +7,4 @@ export type Article_list_create_response = {
     title?: string | null;
     preview_content: string;
     update_time: string
-}[];
+}[] const ;

@@ -7,4 +7,4 @@ export type Shop_list_create_response = {
     address: string;
     price_min?: number | null;
     pictures?: string | null
-}[];
+}[] const ;

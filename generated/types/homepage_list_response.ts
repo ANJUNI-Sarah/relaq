@@ -9,5 +9,5 @@ export type Homepage_list_response = {
     title?: string | null;
     preview_content: string;
     update_time: string
-}[]
+}[] const 
 };

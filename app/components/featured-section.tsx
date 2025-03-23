@@ -9,11 +9,16 @@ export async function FeaturedSection({ articles }: { articles: Homepage_list_re
       <h2 className="text-xl font-semibold mb-4">最熱話題！</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.map((article) => (
-          <Link key={article.id} href={`/shop/${article.id}`}>
-            <Card>
+          <Link key={article.id} href={`/article/${article.id}`}>
+            <Card className="group transition-all duration-200 hover:shadow-lg">
               <CardContent className="p-0">
                 <div className="aspect-video relative">
-                  <Image src={article.thumbnail || "/placeholder.svg"} alt="Featured content" fill className="object-cover rounded-t-lg" />
+                  <Image 
+                    src={article.thumbnail || "/placeholder.svg"} 
+                    alt="Featured content" 
+                    fill 
+                    className="object-cover rounded-t-lg transition-all duration-200 group-hover:brightness-75" 
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold mb-2">{article.title}</h3>

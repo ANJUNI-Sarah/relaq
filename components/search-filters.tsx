@@ -6,58 +6,70 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useRouter, usePathname } from 'next/navigation';
+import { Shop_list_create_request } from '@/generated/types';
+import { locations, getTownshipsByCity } from '@/lib/constants/location';
+import { priceRanges } from '@/lib/constants/price';
 
-const initialSearchParams = {
+const initialSearchParams: Shop_list_create_request = {
   city: '',
   township: '',
-  price_min: '',
-  price_max: '',
+  price_min: 0,
+  price_max: 9999999,
   keyword: '',
 }
 
+interface SearchFiltersProps {
+  isBanner?: boolean;
+  bannerImage?: string;
+  searchParams: Shop_list_create_request;
+  setSearchParams: (params: Shop_list_create_request | ((prev: Shop_list_create_request) => Shop_list_create_request)) => void;
+  onSearch?: () => void;
+}
 
 export function SearchFilters({
   isBanner = false,
   bannerImage = '/banner.webp',
-  searchValue = initialSearchParams,
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
+  searchParams = initialSearchParams,
+  setSearchParams,
+  onSearch
+}: SearchFiltersProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchParams, setSearchParams] = useState(searchValue);
 
   const handleDialogOpen = () => {
     setIsDialogOpen((prev) => !prev);
   }
 
-  const handleSearch = async () => {
-    // 如果不在 /list 頁面，先導航過去
-    if (pathname !== '/list') {
-      // 將搜索參數轉換為 JSON 字符串，使用 encodeURIComponent 處理 Unicode 字符
-      const encodedParams = btoa(encodeURIComponent(JSON.stringify(searchParams)));
-      router.push(`/list?q=${encodedParams}`);
+  const handlePriceChange = (value: string) => {
+    const selectedRange = priceRanges.find(range => range.value === value);
+    if (selectedRange) {
+      setSearchParams((prev:Shop_list_create_request) => ({
+        ...prev,
+        price_min: selectedRange.min,
+        price_max: selectedRange.max, 
+      }));
     }
   };
 
-  const handlePriceChange = (value: string) => {
-    const [min, max] = value.split('-').map(v => parseInt(v) || 0);
-    setSearchParams(prev => ({
+  const handleCityChange = (value: string) => {
+    setSearchParams((prev: Shop_list_create_request) => ({
       ...prev,
-      price_min: min.toString(),
-      price_max: max.toString(), 
+      city: value,
+      township: '', // 清空鄉鎮選擇
     }));
   };
 
-  const handleLocationConfirm = (city: string, township: string) => {
-    setSearchParams(prev => ({
+  const handleTownshipChange = (value: string) => {
+    setSearchParams((prev: Shop_list_create_request) => ({
       ...prev,
-      city,
-      township,
+      township: value,
     }));
+  };
+
+  const handleLocationConfirm = () => {
     setIsDialogOpen(false);
   };
 
+  const availableTownships = getTownshipsByCity(searchParams.city || '');
 
   return (
     <div className="relative flex justify-center items-center">
@@ -76,7 +88,7 @@ export function SearchFilters({
             <AlertDialogTrigger asChild>
               <Select>
                 <SelectTrigger className="w-[180px]" onClick={handleDialogOpen}>
-                  <SelectValue placeholder={searchParams.city && searchParams.township ? `${searchParams.city} ${searchParams.township}` : "地區"} />
+                  <SelectValue placeholder={searchParams.city ? `${searchParams.city}${searchParams.township ? ` ${searchParams.township}` : ''}` : "地區"} />
                 </SelectTrigger>
               </Select>
             </AlertDialogTrigger>
@@ -88,50 +100,79 @@ export function SearchFilters({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-4">
-                <Select onValueChange={(value) => setSearchParams(prev => ({ ...prev, city: value }))} defaultValue={searchParams.city}>
+                <Select 
+                  onValueChange={handleCityChange} 
+                  defaultValue={searchParams.city || ''}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="縣市" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="台北市">台北市</SelectItem>
+                    {locations.map(location => (
+                      <SelectItem key={location.city} value={location.city}>
+                        {location.city}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <Select onValueChange={(value) => setSearchParams(prev => ({ ...prev, township: value }))} defaultValue={searchParams.township}>
+                <Select 
+                  onValueChange={handleTownshipChange} 
+                  defaultValue={searchParams.township || ''}
+                  disabled={!searchParams.city}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="鄉鎮" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="大安區">大安區</SelectItem>
+                    {availableTownships.map(township => (
+                      <SelectItem key={township} value={township}>
+                        {township}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <AlertDialogFooter>
-                <Button onClick={() => handleLocationConfirm(searchParams.city, searchParams.township)}>確認</Button>
+                <Button onClick={handleLocationConfirm}>確認</Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Select onValueChange={handlePriceChange} defaultValue={searchParams.price_min && searchParams.price_max &&`${searchParams.price_min}-${searchParams.price_max}`}>
+          <Select 
+            onValueChange={handlePriceChange} 
+            value={`${searchParams.price_min}-${searchParams.price_max}`}
+          >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="價格" />
+              <SelectValue placeholder="價格">
+                {priceRanges.find(range => 
+                  range.min === searchParams.price_min && 
+                  range.max === searchParams.price_max
+                )?.label || "價格"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="0-500">NT$ 0-500</SelectItem>
-              <SelectItem value="501-1000">NT$ 501-1000</SelectItem>
-              <SelectItem value="1001-99999">NT$ 1001+</SelectItem>
+              {priceRanges.map(range => (
+                <SelectItem key={range.value} value={range.value}>
+                  {range.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-
         </div>
         <div className="flex gap-2">
           <Input 
-            defaultValue={searchParams.keyword}
+            defaultValue={searchParams.keyword || ''}
             type="search" 
             placeholder="請輸入地區、店家名稱或關鍵字" 
             className="flex-1"
-            value={searchParams.keyword}
+            value={searchParams.keyword || ''}
             onChange={(e) => setSearchParams(prev => ({ ...prev, keyword: e.target.value }))}
           />
-          <Button size="icon" variant="secondary" onClick={handleSearch}>
+          <Button 
+            size="icon" 
+            variant="secondary" 
+            onClick={onSearch}
+            className="hover:bg-gray-200 transition-colors duration-200"
+          >
             <Search className="h-4 w-4" />
           </Button>
         </div>
