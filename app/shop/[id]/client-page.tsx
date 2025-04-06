@@ -4,9 +4,11 @@ import Image from "next/image"
 import { Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { StyleTag } from "@/app/components/StyleTag"
 import { ImageViewer } from "./image-viewer"
 import { useState } from "react"
 import { Shop_create_response } from "@/generated/types"
+
 
 const images = [
   "/banner.webp",
@@ -80,22 +82,40 @@ export function ClientPage( shopData: Shop_create_response) {
 
           <section>
             <h2 className="text-xl font-semibold mb-4">核心特色</h2>
-            <p className="text-muted-foreground">
-              {shopData.core_features}
-            </p>
+            <div 
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: shopData.core_features }}
+            />
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-4">評價摘要</h2>
-            <p className="text-muted-foreground">
-              {shopData.review_summary}
-            </p>
+            <div 
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: shopData.review_summary }}
+            />
           </section>
 
           <section>
             <h2 className="text-xl font-semibold mb-4">推薦用途</h2>
+            <div 
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: shopData.recommended_uses }}
+            />
+          </section>
+          <section>
             <p className="text-muted-foreground">
-              {shopData.recommended_uses}
+            {/* {shopData.style_tags?.map((tag, index) => (
+                <StyleTag
+                  key={index}
+                  icon={
+                    tag === "自然風" ? "🌿" :
+                    tag === "個性風" ? "💠" :
+                    tag === "漸層美甲" ? "🌈" : undefined
+                  }
+                  label={tag}
+                />
+              ))} */}
             </p>
           </section>
         </div>

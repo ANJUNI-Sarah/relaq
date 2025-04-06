@@ -5,7 +5,7 @@ export type Article_create_response = {
     id?: number | null;
     thumbnail?: string | null;
     title?: string | null;
-    preview_content: string;
-    update_time: string;
-    created_by?: string | null
+    update_time?: string | null;
+    created_by?: string | null;
+    content?: string | null;
 };

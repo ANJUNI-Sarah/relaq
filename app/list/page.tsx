@@ -18,7 +18,6 @@ export default async function ListPage({
 }: {
   searchParams: { q?: string }
 }) {
-  let initialShops: Shop_list_create_response = [];
   // let initialParams = initialSearchParams;
 
   if(!searchParams.q) {
@@ -37,7 +36,7 @@ export default async function ListPage({
     price_max: decodedParams.price_max,
     keyword: decodedParams.keyword,
   });
-  initialShops = response;
+  const initialShops = response;
 
   return (
     <div className="container mx-auto px-4 py-8">

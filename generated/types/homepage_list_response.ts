@@ -4,10 +4,9 @@
 export type Homepage_list_response = {
     banner: string;
     articles: {
-    id?: number | null;
-    thumbnail?: string | null;
-    title?: string | null;
-    preview_content: string;
-    update_time: string
-}[] const 
+        id: number;
+        thumbnail: string;
+        title: string;
+        update_time: string;
+    }[];
 };

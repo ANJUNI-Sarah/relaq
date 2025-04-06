@@ -14,7 +14,7 @@ export default async function ArticlePage({
     const article = await serverApi.article.getDetail(id);
 
     // 清理 HTML 內容
-    const sanitizedContent = sanitizeHtml(article.preview_content);
+    const sanitizedContent = sanitizeHtml(article.content|| '');
 
     return (
         <article className="container mx-auto px-4 py-8 max-w-4xl">
@@ -33,7 +33,7 @@ export default async function ArticlePage({
             
             <div className="flex items-center text-gray-600 mb-8">
                 <span className="mr-4">
-                    {format(new Date(article.update_time), "PPP", { locale: zhTW })}
+                    {format(new Date(article.update_time || ''), "PPP", { locale: zhTW })}
                 </span>
                 {article.created_by && (
                     <span>作者：{article.created_by}</span>
