@@ -3,15 +3,6 @@ import { Shop_list_create_request, Shop_list_create_response } from '@/generated
 import { fetchShopList } from '@/lib/data'
 import { redirect } from 'next/navigation'
 
-const initialSearchParams: Shop_list_create_request = {
-  page: 1,
-  page_size: 10,
-  city: "",
-  township: "",
-  price_min: 0,
-  price_max: 0,
-  keyword: "",
-}
 
 export default async function ListPage({
   searchParams,

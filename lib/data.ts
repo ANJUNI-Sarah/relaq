@@ -31,27 +31,27 @@ export async function fetchShopData(
     return data.data;
 }
 
-export async function fetchShopDataList(
-    payload: Shop_list_create_request
-): Promise<Shop_list_create_response> {
-    console.log("payload", payload);
-    const response = await fetch(PATHS.SHOP_LIST_CREATE, {
-        method: API_METHODS.SHOP_LIST_CREATE,
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-    });
+// export async function fetchShopDataList(
+//     payload: Shop_list_create_request
+// ): Promise<Shop_list_create_response> {
+//     console.log("payload", payload);
+//     const response = await fetch(PATHS.SHOP_LIST_CREATE, {
+//         method: API_METHODS.SHOP_LIST_CREATE,
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(payload),
+//     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
+//     if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//     }
 
-    const data = await response.json();
-    console.log("data", data);
+//     const data = await response.json();
+//     console.log("data", data);
 
-    return data.data;
-}
+//     return data.data;
+// }
 
 // 取得首頁資料
 export async function fetchHomeData(): Promise<Homepage_list_response> {
@@ -115,7 +115,7 @@ export async function fetchShopList(params: ShopListParams) {
             "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
         },
-        body: JSON.stringify(params),
+        body: JSON.stringify({ params }),
     });
 
     if (!response.ok) {

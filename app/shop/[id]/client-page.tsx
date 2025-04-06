@@ -105,7 +105,7 @@ export function ClientPage( shopData: Shop_create_response) {
           </section>
           <section>
             <p className="text-muted-foreground">
-            {/* {shopData.style_tags?.map((tag, index) => (
+            {shopData.tags?.map((tag, index) => (
                 <StyleTag
                   key={index}
                   icon={
@@ -115,7 +115,7 @@ export function ClientPage( shopData: Shop_create_response) {
                   }
                   label={tag}
                 />
-              ))} */}
+              ))}
             </p>
           </section>
         </div>

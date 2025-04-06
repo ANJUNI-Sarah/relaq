@@ -12,5 +12,6 @@ export type Shop_create_response = {
     price_range: string;
     core_features: string;
     review_summary: string;
-    recommended_uses: string
+    recommended_uses: string;
+    tags: string[];
 };
