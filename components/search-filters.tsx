@@ -14,7 +14,7 @@ const initialSearchParams: Shop_list_create_request = {
   city: '',
   township: '',
   price_min: 0,
-  price_max: 9999999,
+  price_max: null,
   keyword: '',
 }
 

@@ -17,7 +17,7 @@ export function HomeSearch({ bannerImage }: HomeSearchProps) {
     city: "",
     township: "",
     price_min: 0,
-    price_max: 0,
+    price_max: null,
     keyword: "",
   });
   
