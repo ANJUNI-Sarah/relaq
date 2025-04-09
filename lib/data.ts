@@ -114,8 +114,9 @@ export async function fetchShopList(params: ShopListParams) {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            Pragma: "no-cache",
         },
-        body: JSON.stringify({ params }),
+        body: JSON.stringify({ ...params }),
     });
 
     if (!response.ok) {
@@ -123,6 +124,7 @@ export async function fetchShopList(params: ShopListParams) {
     }
 
     const data = await response.json();
+    console.log("data", data);
 
     return data.data;
 }
