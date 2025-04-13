@@ -2,15 +2,11 @@ import { Heart } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Shop_list_create_response } from "@/generated/types"
+import { Shop_list_create_response_data_items_item } from "@/generated/types/shop_list_create_response"
 
-type Shop = Shop_list_create_response[number]
 
-interface ShopCardProps {
-  shop: Shop;
-}
 
-export function ShopCard({ shop }: ShopCardProps) {
+export function ShopCard({ shop }: { shop: Shop_list_create_response_data_items_item }) {
   return (
     <Card className="group overflow-hidden transition-all duration-200 hover:shadow-lg">
       <Link href={`/shop/${shop.id}`} className="block">
@@ -18,7 +14,7 @@ export function ShopCard({ shop }: ShopCardProps) {
           {shop.pictures && (
             <div className="relative">
               <img
-                src={shop.pictures}
+                src={shop.pictures[0]}
                 alt={shop.name}
                 className="w-full h-48 object-cover transition-all duration-200 group-hover:brightness-75"
               />

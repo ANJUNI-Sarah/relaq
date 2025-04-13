@@ -11,10 +11,12 @@ import { locations, getTownshipsByCity } from '@/lib/constants/location';
 import { priceRanges } from '@/lib/constants/price';
 
 const initialSearchParams: Shop_list_create_request = {
+  page: 1,
+  page_size: 10,
   city: '',
   township: '',
   price_min: 0,
-  price_max: null,
+  price_max: 99999999,
   keyword: '',
 }
 
@@ -67,6 +69,10 @@ export function SearchFilters({
 
   const handleLocationConfirm = () => {
     setIsDialogOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setSearchParams(initialSearchParams);
   };
 
   const availableTownships = getTownshipsByCity(searchParams.city || '');
@@ -137,26 +143,37 @@ export function SearchFilters({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Select 
-            onValueChange={handlePriceChange} 
-            value={`${searchParams.price_min}-${searchParams.price_max}`}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="價格">
-                {priceRanges.find(range => 
-                  range.min === searchParams.price_min && 
-                  range.max === searchParams.price_max
-                )?.label || "價格"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {priceRanges.map(range => (
-                <SelectItem key={range.value} value={range.value}>
-                  {range.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 items-center">
+            <Select 
+              onValueChange={handlePriceChange} 
+              value={`${searchParams.price_min}-${searchParams.price_max}`}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="價格">
+                  {priceRanges.find(range => 
+                    range.min === searchParams.price_min && 
+                    range.max === searchParams.price_max
+                  )?.label || "價格"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {priceRanges.map(range => (
+                  <SelectItem key={range.value} value={range.value}>
+                    {range.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleClearFilters}
+              className="text-gray-500 hover:text-gray-700 border-none"
+              disabled={JSON.stringify(searchParams) === JSON.stringify(initialSearchParams)}
+            >
+              清除篩選
+            </Button>
+          </div>
         </div>
         <div className="flex gap-2">
           <Input 

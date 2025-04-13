@@ -6,12 +6,12 @@ export type Shop_create_response = {
     name: string;
     address: string;
     price_min: number;
-    pictures?: string | null;
+    photos?: string[];
     phone: string;
     business_hours: string;
     price_range: string;
     core_features: string;
     review_summary: string;
     recommended_uses: string;
-    tags: string[];
+    tags?: string
 };

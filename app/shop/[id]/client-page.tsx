@@ -10,20 +10,10 @@ import { useState } from "react"
 import { Shop_create_response } from "@/generated/types"
 
 
-const images = [
-  "/banner.webp",
-  "/placeholder.jpg",
-  "/placeholder-user.jpg",
-  "/placeholder-logo.png",
-  "/placeholder.svg",
-  "/placeholder-logo.svg",
-]
-
-
-
 export function ClientPage( shopData: Shop_create_response) {
   const [isViewerOpen, setIsViewerOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const photos = shopData.photos || []
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index)
@@ -31,11 +21,11 @@ export function ClientPage( shopData: Shop_create_response) {
   }
 
   const handlePrevious = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    setCurrentImageIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1))
   }
 
   const handleNext = () => {
-    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    setCurrentImageIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1))
   }
 
   return (
@@ -50,7 +40,7 @@ export function ClientPage( shopData: Shop_create_response) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {images.map((src, i) => (
+            {shopData.photos?.map((src, i) => (
               <div
                 key={i}
                 className="relative aspect-square cursor-pointer"
@@ -72,7 +62,7 @@ export function ClientPage( shopData: Shop_create_response) {
           </div>
 
           <ImageViewer
-            images={images}
+            images={shopData.photos || []}
             currentIndex={currentImageIndex}
             isOpen={isViewerOpen}
             onClose={() => setIsViewerOpen(false)}

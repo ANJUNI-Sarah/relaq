@@ -3,10 +3,5 @@
 
 export type Homepage_list_response = {
     banner: string;
-    articles: {
-        id: number;
-        thumbnail: string;
-        title: string;
-        update_time: string;
-    }[];
+    articles: any[]
 };

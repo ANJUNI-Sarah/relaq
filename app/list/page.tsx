@@ -27,13 +27,14 @@ export default async function ListPage({
     price_max: decodedParams.price_max,
     keyword: decodedParams.keyword,
   });
-  const initialShops = response;
+
 
   return (
     <div className="container mx-auto px-4 py-8">
       <ListContainer 
-        initialShops={initialShops}
+        initialShops={response.items || []}
         initialSearchParams={decodedParams}
+        totalPages={response.total_pages || 1}
       />
     </div>
   )

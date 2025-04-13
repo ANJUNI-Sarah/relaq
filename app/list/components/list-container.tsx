@@ -1,31 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { Shop_list_create_request, Shop_list_create_response } from "@/generated/types";
+import { Shop_list_create_request } from "@/generated/types";
 import { ShopList } from "./shop-list";
 import { SearchFilters } from "@/components/search-filters";
-import { shopService } from "@/app/services/shop.service";
 import { Pagination } from "@/components/pagination";
+import { Shop_list_create_response_data_items_item } from "@/generated/types/shop_list_create_response";
+import { fetchShopList } from "@/lib/data";
 
 interface ListContainerProps {
-    initialShops: Shop_list_create_response;
+    initialShops: Shop_list_create_response_data_items_item[];
     initialSearchParams: Shop_list_create_request;
+    totalPages: number;
 }
 
-export function ListContainer({ initialShops, initialSearchParams }: ListContainerProps) {
-    const [shops, setShops] = useState<Shop_list_create_response>(initialShops);
+export function ListContainer({ initialShops, initialSearchParams, totalPages }: ListContainerProps) {
+    const [shops, setShops] = useState<Shop_list_create_response_data_items_item[]>(initialShops);
     const [currentParams, setCurrentParams] = useState<Shop_list_create_request>(initialSearchParams);
+    const [currentTotalPages, setCurrentTotalPages] = useState(totalPages);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    console.log('shops',shops);
 
     const handleSearch = async () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await shopService.search(currentParams);
-            console.log('data',data);
-            setShops(data);
+            const data = await fetchShopList(currentParams);
+            setShops(data.items || []);
+            setCurrentTotalPages(data.total_pages || 1);
         } catch (error) {
             console.error("搜索失敗:", error);
             setError("搜索失敗，請稍後再試");
@@ -53,7 +55,7 @@ export function ListContainer({ initialShops, initialSearchParams }: ListContain
             />
             <Pagination 
                 currentPage={currentParams.page || 1}
-                totalPages={shops.total_pages || 1}
+                totalPages={currentTotalPages || 1}
                 onPageChange={handlePageChange}
             />
         </div>

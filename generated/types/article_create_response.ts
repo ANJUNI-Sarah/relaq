@@ -1,11 +1,17 @@
 // 由 api-gen.js 生成
 // 請勿手動編輯此檔案
 
+export type Article_create_response_data = {
+    id?: number;
+    thumbnail?: string;
+    title?: string;
+    update_time?: string;
+    created_by?: string;
+    content?: string
+};
+
 export type Article_create_response = {
-    id?: number | null;
-    thumbnail?: string | null;
-    title?: string | null;
-    update_time?: string | null;
-    created_by?: string | null;
-    content?: string | null;
+    code?: string;
+    msg?: string;
+    data?: Article_create_response_data
 };

@@ -100,80 +100,147 @@ function resolveSchemaRef(schema, openapi3Json) {
     return schema;
 }
 
-// 生成 TypeScript 類型定義
-function generateTypeDefinition(schema, openapi3Json, typeName = "") {
-    if (!schema) {
-        console.error("Schema 未定義");
-        process.exit(1);
+// 生成獨立的類型定義
+function generateIndependentType(
+    schema,
+    openapi3Json,
+    typeName,
+    parentPath = ""
+) {
+    const types = new Map();
+
+    function processSchema(schema, typeName) {
+        const resolvedSchema = resolveSchemaRef(schema, openapi3Json);
+
+        if (resolvedSchema.type === "object") {
+            // 為物件的每個屬性生成獨立類型
+            const properties = {};
+            Object.entries(resolvedSchema.properties || {}).forEach(
+                ([key, prop]) => {
+                    if (prop.type === "object") {
+                        const subTypeName = `${typeName}_${key}`;
+                        const subType = processSchema(prop, subTypeName);
+                        properties[key] = { type: subTypeName };
+                        types.set(subTypeName, subType);
+                    } else if (
+                        prop.type === "array" &&
+                        prop.items.type === "object"
+                    ) {
+                        const itemTypeName = `${typeName}_${key}_item`;
+                        const itemType = processSchema(
+                            prop.items,
+                            itemTypeName
+                        );
+                        properties[key] = { type: `${itemTypeName}[]` };
+                        types.set(itemTypeName, itemType);
+                    } else {
+                        properties[key] = prop;
+                    }
+                }
+            );
+            return {
+                type: "object",
+                properties,
+                required: resolvedSchema.required,
+            };
+        }
+
+        return resolvedSchema;
     }
 
-    // 解析引用
+    const mainType = processSchema(schema, typeName);
+    types.set(typeName, mainType);
+
+    return types;
+}
+
+// 修改生成類型定義的函數
+function generateTypeDefinition(schema, openapi3Json, typeName = "") {
+    if (!schema) return "any";
+
     const resolvedSchema = resolveSchemaRef(schema, openapi3Json);
-    if (!resolvedSchema) {
-        console.error("無法解析 schema 引用");
-        process.exit(1);
-    }
+    let typeDefinitions = [];
 
     if (resolvedSchema.type === "object") {
-        if (!resolvedSchema.properties) return "Record<string, any>";
-
-        const properties = Object.entries(resolvedSchema.properties)
+        // 處理物件內的屬性
+        const properties = Object.entries(resolvedSchema.properties || {})
             .map(([key, prop]) => {
                 const isRequired = (resolvedSchema.required || []).includes(
                     key
                 );
-                const propertyType = generateTypeDefinition(prop, openapi3Json);
-                const isNullable =
-                    prop["x-nullable"] === true || prop.nullable === true;
+                let propertyType;
 
-                return `    ${key}${isRequired ? "" : "?"}: ${propertyType}${
-                    isNullable || !isRequired ? " | null" : ""
-                }`;
+                if (prop.type === "object") {
+                    // 為巢狀物件創建獨立型別
+                    const subTypeName = `${typeName}_${key}`;
+                    const subType = generateTypeDefinition(
+                        prop,
+                        openapi3Json,
+                        subTypeName
+                    );
+                    typeDefinitions.push(subType);
+                    propertyType = subTypeName;
+                } else if (prop.type === "array") {
+                    // 處理陣列
+                    if (prop.items.type === "object") {
+                        // 陣列中的物件型別
+                        const itemTypeName = `${typeName}_${key}_item`;
+                        const itemType = generateTypeDefinition(
+                            prop.items,
+                            openapi3Json,
+                            itemTypeName
+                        );
+                        typeDefinitions.push(itemType);
+                        propertyType = `${itemTypeName}[]`;
+                    } else {
+                        propertyType = `${generateBasicType(prop.items)}[]`;
+                    }
+                } else {
+                    propertyType = generateBasicType(prop);
+                }
+
+                return `    ${key}${isRequired ? "" : "?"}: ${propertyType}`;
             })
             .join(";\n");
 
-        return `{\n${properties}\n}`;
+        const mainType = `export type ${typeName} = {\n${properties}\n};\n`;
+        typeDefinitions.push(mainType);
+
+        return typeDefinitions.join("\n");
     }
 
     if (resolvedSchema.type === "array") {
-        // 如果是陣列類型，且有類型名稱
-        if (typeName && resolvedSchema.items.type === "object") {
-            const singularName = typeName
-                .replace(/_response$/, "")
-                .replace(/_list.*$/, "");
-            const itemType = generateTypeDefinition(
+        if (resolvedSchema.items.type === "object") {
+            const itemTypeName = `${typeName}_item`;
+            const itemTypeDefinition = generateTypeDefinition(
                 resolvedSchema.items,
-                openapi3Json
+                openapi3Json,
+                itemTypeName
             );
-            return `${singularName}[]`;
+            return `${itemTypeDefinition}\n\nexport type ${typeName} = ${itemTypeName}[];\n`;
         }
-        const itemType = generateTypeDefinition(
-            resolvedSchema.items,
-            openapi3Json
-        );
-        return `${itemType}[] const `;
+        return `${generateBasicType(resolvedSchema.items)}[]`;
     }
 
-    // 基本類型映射
+    return generateBasicType(resolvedSchema);
+}
+
+// 生成基本類型
+function generateBasicType(schema) {
     const typeMapping = {
-        string: resolvedSchema.format === "date-time" ? "string" : "string",
+        string: schema.format === "date-time" ? "string" : "string",
         number: "number",
         integer: "number",
         boolean: "boolean",
     };
 
-    if (resolvedSchema.enum) {
-        return resolvedSchema.enum
+    if (schema.enum) {
+        return schema.enum
             .map((v) => (typeof v === "string" ? `'${v}'` : v))
             .join(" | ");
     }
 
-    const mappedType = typeMapping[resolvedSchema.type];
-    if (!mappedType) {
-        console.error(`未知類型：${resolvedSchema.type}`);
-        process.exit(1);
-    }
-    return mappedType;
+    return typeMapping[schema.type] || "any";
 }
 
 // 生成類型定義
@@ -272,55 +339,19 @@ async function generateTypes() {
                             operationId
                         )}_response`;
 
-                        // 檢查是否為陣列類型且包含對象
-                        if (
-                            responseSchema.type === "array" &&
-                            responseSchema.items.type === "object"
-                        ) {
-                            const singularName = operationId.replace(
-                                /_list.*$/,
-                                ""
-                            );
-                            const capitalizedSingularName =
-                                capitalizeFirstLetter(singularName);
-                            const itemTypeDefinition = generateTypeDefinition(
-                                responseSchema.items,
-                                openapi3Json
-                            );
-
-                            const responseContent = `// 由 api-gen.js 生成
+                        const typeDefinition = generateTypeDefinition(
+                            responseSchema,
+                            openapi3Json,
+                            typeName
+                        );
+                        const responseContent = `// 由 api-gen.js 生成
 // 請勿手動編輯此檔案
 
-export type ${capitalizedSingularName} = ${itemTypeDefinition};
-
-export type ${typeName} = ${capitalizedSingularName}[];
-`;
-                            fs.writeFileSync(
-                                path.join(
-                                    TYPES_DIR,
-                                    `${operationId}_response.ts`
-                                ),
-                                responseContent
-                            );
-                        } else {
-                            const typeDefinition = generateTypeDefinition(
-                                responseSchema,
-                                openapi3Json,
-                                typeName
-                            );
-                            const responseContent = `// 由 api-gen.js 生成
-// 請勿手動編輯此檔案
-
-export type ${typeName} = ${typeDefinition};
-`;
-                            fs.writeFileSync(
-                                path.join(
-                                    TYPES_DIR,
-                                    `${operationId}_response.ts`
-                                ),
-                                responseContent
-                            );
-                        }
+${typeDefinition}`;
+                        fs.writeFileSync(
+                            path.join(TYPES_DIR, `${operationId}_response.ts`),
+                            responseContent
+                        );
                     }
 
                     // 生成請求類型文件
@@ -331,15 +362,19 @@ export type ${typeName} = ${typeDefinition};
                         const requestSchema =
                             operation.requestBody.content["application/json"]
                                 .schema;
+                        const typeName = `${capitalizeFirstLetter(
+                            operationId
+                        )}_request`;
+
                         const typeDefinition = generateTypeDefinition(
                             requestSchema,
-                            openapi3Json
+                            openapi3Json,
+                            typeName
                         );
                         const requestContent = `// 由 api-gen.js 生成
 // 請勿手動編輯此檔案
 
-export type ${capitalizeFirstLetter(operationId)}_request = ${typeDefinition};
-`;
+${typeDefinition}`;
                         fs.writeFileSync(
                             path.join(TYPES_DIR, `${operationId}_request.ts`),
                             requestContent
