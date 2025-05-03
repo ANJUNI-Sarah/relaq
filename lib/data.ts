@@ -39,11 +39,9 @@ export async function fetchShopList(
         method: API_METHODS.SHOP_LIST_CREATE,
         headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            Pragma: "no-cache",
+            Accept: "application/json",
         },
+        cache: "no-cache",
         body: JSON.stringify(params),
     });
 
