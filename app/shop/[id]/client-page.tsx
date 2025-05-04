@@ -14,6 +14,7 @@ export function ClientPage( shopData: Shop_create_response) {
   const [isViewerOpen, setIsViewerOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const photos = shopData.photos || []
+  const photosPreview = photos.slice(0, 5)
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index)
@@ -40,7 +41,7 @@ export function ClientPage( shopData: Shop_create_response) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {shopData.photos?.map((src, i) => (
+            {photosPreview.map((src, i) => (
               <div
                 key={i}
                 className="relative aspect-square cursor-pointer"
