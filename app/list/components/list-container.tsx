@@ -6,7 +6,7 @@ import { ShopList } from "./shop-list";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
 import { Shop_list_create_response_data_items_item } from "@/generated/types/shop_list_create_response";
-import { fetchShopList } from "@/lib/data";
+import { fetchShopListClient } from "@/lib/data";
 
 interface ListContainerProps {
     initialShops: Shop_list_create_response_data_items_item[];
@@ -25,7 +25,7 @@ export function ListContainer({ initialShops, initialSearchParams, totalPages }:
         try {
             setLoading(true);
             setError(null);
-            const data = await fetchShopList(currentParams);
+            const data = await fetchShopListClient(currentParams);
             setShops(data.items || []);
             setCurrentTotalPages(data.total_pages || 1);
         } catch (error) {

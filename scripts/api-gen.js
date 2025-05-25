@@ -15,15 +15,15 @@ if (!fs.existsSync(TYPES_DIR)) {
 }
 
 // 檢查環境變數
-if (!process.env.NEXT_PUBLIC_API_URL) {
-    console.error("❌ 錯誤：未設置 NEXT_PUBLIC_API_URL 環境變數");
-    console.error("請在 .env 檔案中設置 NEXT_PUBLIC_API_URL");
-    console.error("範例：NEXT_PUBLIC_API_URL=http://127.0.0.1:8000");
+if (!process.env.NEXT_PUBLIC_CLIENT_API_URL) {
+    console.error("❌ 錯誤：未設置 NEXT_PUBLIC_CLIENT_API_URL 環境變數");
+    console.error("請在 .env 檔案中設置 NEXT_PUBLIC_CLIENT_API_URL");
+    console.error("範例：NEXT_PUBLIC_CLIENT_API_URL=http://127.0.0.1:8000");
     process.exit(1);
 }
 
 // 移除末尾的斜線
-const baseUrl = process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
+const baseUrl = process.env.NEXT_PUBLIC_CLIENT_API_URL.replace(/\/$/, "");
 // API 文檔 URL
 const API_URL = `${baseUrl}/api-redocs/?format=openapi`;
 
@@ -391,7 +391,7 @@ export const PATHS = {
 ${Object.entries(pathMapping)
     .map(
         ([operationId, { path }]) =>
-            `    ${operationId.toUpperCase()}: \`\${process.env.NEXT_PUBLIC_API_URL}/api${path}\` as const,`
+            `    ${operationId.toUpperCase()}: \`/api${path}\` as const,`
     )
     .join("\n")}
 } as const;
