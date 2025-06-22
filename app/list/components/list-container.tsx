@@ -36,8 +36,11 @@ export function ListContainer({ initialShops, initialSearchParams, totalPages }:
         }
     };
 
-    const handlePageChange = (page: number) => {
+    const handlePageChange = async (page: number) => {
         setCurrentParams({ ...currentParams, page });
+        const data = await fetchShopListClient(currentParams);
+        setShops(data.items || []);
+        setCurrentTotalPages(data.total_pages || 1);
     };
 
     return (
