@@ -1,8 +1,6 @@
-import { serverApi } from "@/lib/api/server";
 import Image from "next/image";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
-import { Article_create_response } from "@/generated/types";
 import { sanitizeHtml } from "@/lib/utils/html";
 import { fetchArticleData } from "@/lib/data";
 export default async function ArticlePage({
