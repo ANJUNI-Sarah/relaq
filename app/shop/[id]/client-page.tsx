@@ -5,30 +5,17 @@ import { Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { StyleTag } from "@/app/components/StyleTag"
-import { ImageViewer } from "./image-viewer"
-import { useState } from "react"
 import { Shop_create_response } from "@/generated/types"
 
 
 export function ClientPage( shopData: Shop_create_response) {
-  const [isViewerOpen, setIsViewerOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const photos = shopData.photos || []
-  const photosPreview = photos.slice(0, 5)
-
-  const handleImageClick = (index: number) => {
-    setCurrentImageIndex(index)
-    setIsViewerOpen(true)
+  const socialMedia = {
+    instagram: "https://www.instagram.com/yourshop",
+    facebook: "https://www.facebook.com/yourshop",
+    google: "https://www.google.com/maps/place/yourshop",
   }
 
-  const handlePrevious = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1))
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1))
-  }
-
+  
   return (
     <div className="container py-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -40,37 +27,19 @@ export function ClientPage( shopData: Shop_create_response) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {photosPreview.map((src, i) => (
-              <div
-                key={i}
-                className="relative aspect-square cursor-pointer"
-                onClick={() => handleImageClick(i)}
-              >
-                <Image
-                  src={src}
-                  alt={`Shop image ${i + 1}`}
-                  fill
-                  className="object-cover rounded-lg"
-                />
-                {i === 5 && (
-                  <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-medium">畫廊</span>
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="space-y-4">
+            {
+              socialMedia.instagram && <div className="flex cursor-pointer hover:underline text-blue-400">
+              <Image src="/icon-instagram.webp" alt="instagram-icon hover:underline" width="26" height="26"/><a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="pl-2">Instagram</a></div>
+            }
+            {
+              socialMedia.facebook&& <div className="flex cursor-pointer hover:underline text-blue-400"><Image src="/icon-facebook.webp" alt="facebook-icon" width="26" height="26"/><a href={socialMedia.facebook} target="_blank" rel="noopener noreferrer"  className="pl-2">Facebook</a></div>
+            }
+            {
+              socialMedia.google && <div className="flex cursor-pointer hover:underline text-blue-400"><Image src="/icon-google.webp" alt="google-icon" width="26" height="26"/><a href={socialMedia.google} target="_blank" rel="noopener noreferrer"  className="pl-2">Google</a></div>
+            }
+            
           </div>
-
-          <ImageViewer
-            images={shopData.photos || []}
-            currentIndex={currentImageIndex}
-            isOpen={isViewerOpen}
-            onClose={() => setIsViewerOpen(false)}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-          />
-
           <section>
             <h2 className="text-xl font-semibold mb-4">核心特色</h2>
             <div 
@@ -95,7 +64,7 @@ export function ClientPage( shopData: Shop_create_response) {
             />
           </section>
           <section>
-            <p className="text-muted-foreground">
+            <div className="text-muted-foreground">
             {shopData.tags?.map((tag, index) => (
                 <StyleTag
                   key={index}
@@ -107,7 +76,7 @@ export function ClientPage( shopData: Shop_create_response) {
                   label={tag}
                 />
               ))}
-            </p>
+            </div>
           </section>
         </div>
 

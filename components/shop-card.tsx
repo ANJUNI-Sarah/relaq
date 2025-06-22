@@ -11,15 +11,13 @@ export function ShopCard({ shop }: { shop: Shop_list_create_response_data_items_
     <Card className="group overflow-hidden transition-all duration-200 hover:shadow-lg">
       <Link href={`/shop/${shop.id}`} className="block">
         <div className="relative">
-          {shop.pictures && (
             <div className="relative">
               <img
-                src={shop.pictures[0]}
+                src='defaultImg.jpg'
                 alt={shop.name}
                 className="w-full h-48 object-cover transition-all duration-200 group-hover:brightness-75"
               />
             </div>
-          )}
           <div className="p-4">
             <h3 className="font-semibold">{shop.name}</h3>
             <p className="text-sm text-muted-foreground">{shop.address}</p>
