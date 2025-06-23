@@ -2,7 +2,6 @@ import {
     Shop_create_request,
     Shop_create_response,
     Shop_list_create_request,
-    Shop_list_create_response,
     Homepage_list_response,
     Article_list_create_request,
     Article_list_create_response,
