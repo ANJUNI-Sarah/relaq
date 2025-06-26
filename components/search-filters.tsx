@@ -28,13 +28,13 @@ interface SearchFiltersProps {
   onSearch?: () => void;
 }
 
-export function SearchFilters({
+export const SearchFilters = ({
   isBanner = false,
   bannerImage = '/banner.webp',
   searchParams = initialSearchParams,
   setSearchParams,
   onSearch
-}: SearchFiltersProps) {
+}: SearchFiltersProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDialogOpen = () => {
@@ -177,7 +177,6 @@ export function SearchFilters({
         </div>
         <div className="flex gap-2">
           <Input 
-            defaultValue={searchParams.keyword || ''}
             type="search" 
             placeholder="請輸入地區、店家名稱或關鍵字" 
             className="flex-1"

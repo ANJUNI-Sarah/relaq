@@ -3,8 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetchHomeData } from "@/lib/data";
 import { HomeSearch } from "@/app/components/home-search"
 
+
 export default async function Home() {
   const homeData = await fetchHomeData();
+  // const  { toggleDialog } = useAgent()
 
   if(!homeData) {
     throw new Error("暫時無資料，請稍後再試");
@@ -14,6 +16,8 @@ export default async function Home() {
     <div className="w-full py-6 space-y-8">
       <HomeSearch bannerImage={homeData.banner} />
       <FeaturedSection articles={homeData.articles}/>
+
+      {/* <Button onClick={toggleDialog}></Button> */}
       
       {/* <Tabs defaultValue="nails" className="w-full space-y-6">
         <TabsList className="mx-5">

@@ -9,7 +9,7 @@ interface HomeSearchProps {
   bannerImage: string;
 }
 
-export function HomeSearch({ bannerImage }: HomeSearchProps) {
+export const HomeSearch = ({ bannerImage }: HomeSearchProps) => {
   const router = useRouter();
   const [searchParams, setSearchParams] = useState<Shop_list_create_request>({
     page: 1,
@@ -28,12 +28,12 @@ export function HomeSearch({ bannerImage }: HomeSearchProps) {
   }
 
   return (
-    <SearchFilters 
-      isBanner={true} 
+    <SearchFilters
+      isBanner={true}
       bannerImage={bannerImage} 
       searchParams={searchParams} 
       setSearchParams={setSearchParams} 
-      onSearch={onSearch} 
+      onSearch={onSearch}
     />
   );
 } 
