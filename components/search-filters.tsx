@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, FC } from 'react';
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -28,13 +28,13 @@ interface SearchFiltersProps {
   onSearch?: () => void;
 }
 
-export const SearchFilters = ({
+export const SearchFilters: FC<SearchFiltersProps> = ({
   isBanner = false,
   bannerImage = '/banner.webp',
   searchParams = initialSearchParams,
   setSearchParams,
   onSearch
-}: SearchFiltersProps) => {
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDialogOpen = () => {
@@ -91,13 +91,11 @@ export const SearchFilters = ({
       <div className="relative space-y-4 bg-white bg-opacity-75 p-4 rounded-md w-full lg:w-4/5">
         <div className="flex gap-4">
           <AlertDialog open={isDialogOpen}>
-            <AlertDialogTrigger asChild>
               <Select>
                 <SelectTrigger className="w-[180px]" onClick={handleDialogOpen}>
                   <SelectValue placeholder={searchParams.city ? `${searchParams.city}${searchParams.township ? ` ${searchParams.township}` : ''}` : "地區"} />
                 </SelectTrigger>
               </Select>
-            </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>選擇地區</AlertDialogTitle>
