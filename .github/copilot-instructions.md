@@ -45,7 +45,7 @@ Relaq 是一個現代化的美甲美髮預約平台，使用 Next.js 14、TypeSc
 app/
 ├── (pages)/           # 頁面群組
 ├── api/              # API 路由
-├── components/       # 頁面專用組件
+├── _components/      # 頁面專用組件
 └── globals.css       # 全局樣式
 
 components/
