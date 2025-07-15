@@ -1,4 +1,4 @@
-import { ListContainer } from './components/list-container'
+import { ListContainer } from './_components/list-container'
 import { Shop_list_create_request, Shop_list_create_response } from '@/generated/types'
 import { fetchShopList } from '@/lib/data'
 import { redirect } from 'next/navigation'

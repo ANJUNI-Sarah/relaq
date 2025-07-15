@@ -1,7 +1,7 @@
-import { FeaturedSection } from "@/app/components/featured-section"
+import { FeaturedSection } from "@/app/_components/featured-section"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetchHomeData } from "@/lib/data";
-import { HomeSearch } from "@/app/components/home-search"
+import { HomeSearch } from "@/app/_components/home-search"
 
 
 export default async function Home() {
