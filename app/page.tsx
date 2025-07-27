@@ -1,25 +1,27 @@
-import { FeaturedSection } from "@/app/_components/featured-section"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { FeaturedSection } from "@/components/featured-section";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchHomeData } from "@/lib/data";
-import { HomeSearch } from "@/app/_components/home-search"
+import { HomeSearch } from "@/components/home-search";
+import bffApi from "@/bff/routes";
+import { client } from "@/lib/utils/client";
+import Pages from "./fetch";
 
+export default async function Page() {
+    const homeData = { banner: "", articles: [] };
 
-export default async function Home() {
-  const homeData = await fetchHomeData();
-  // const  { toggleDialog } = useAgent()
+    if (!homeData) {
+        throw new Error("暫時無資料，請稍後再試");
+    }
 
-  if(!homeData) {
-    throw new Error("暫時無資料，請稍後再試");
-  }
-  
-  return (
-    <div className="w-full py-6 space-y-8">
-      <HomeSearch bannerImage={homeData.banner} />
-      <FeaturedSection articles={homeData.articles}/>
+    return (
+        <div className="w-full py-6 space-y-8">
+            <Pages />
+            <HomeSearch bannerImage={homeData.banner} />
+            <FeaturedSection articles={homeData.articles} />
 
-      {/* <Button onClick={toggleDialog}></Button> */}
-      
-      {/* <Tabs defaultValue="nails" className="w-full space-y-6">
+            {/* <Button onClick={toggleDialog}></Button> */}
+
+            {/* <Tabs defaultValue="nails" className="w-full space-y-6">
         <TabsList className="mx-5">
           <TabsTrigger value="nails">美甲</TabsTrigger>
           <TabsTrigger value="hair">美髮</TabsTrigger>
@@ -32,7 +34,6 @@ export default async function Home() {
           <FeaturedSection articles={homeData.articles}/>
         </TabsContent>
       </Tabs> */}
-    </div>
-  )
+        </div>
+    );
 }
-

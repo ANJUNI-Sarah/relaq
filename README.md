@@ -50,19 +50,63 @@ yarn dev
 ## 專案結構
 
 ```
-relaq/
-├── app/                    # Next.js 應用程序目錄
-│   ├── api/               # API 路由
-│   ├── article/           # 文章相關頁面
-│   ├── list/             # 店家列表頁面
-│   ├── shop/             # 店家詳情頁面
-│   └── page.tsx          # 首頁
-├── components/            # 全局共用組件
-├── lib/                   # 工具函數和常量
-│   ├── api/               # api
-│   ├── constants/        # 常量定義
-│   └── utils/           # 工具函數
-├── public/               # 靜態資源
+app/
+├── (pages)/           # 頁面群組
+├── api/               # API 路由
+│   ├── bff/           # BFF 層 API 路由
+│   │   ├── shops.ts   # 與商店相關的 API
+│   │   ├── users.ts   # 與用戶相關的 API
+│   │   └── ...        # 其他 API 路由
+│   └── ...            # 其他 API 路由
+├── _components/       # 頁面專用組件
+└── globals.css        # 全局樣式
+
+bff/
+├── routes/            # BFF API 路由邏輯
+│   ├── shops.ts       # 與商店相關的邏輯
+│   ├── users.ts       # 與用戶相關的邏輯
+│   └── ...            # 其他路由邏輯
+├── services/          # 業務邏輯層
+│   ├── shop-service.ts
+│   ├── user-service.ts
+│   └── ...            # 其他服務
+└── utils/             # BFF 專用工具函式
+    ├── api-client.ts  # 封裝後端 API 請求
+    └── ...            # 其他工具函式
+
+components/
+├── ui/                # 共用 UI 元件
+│   ├── button.tsx
+│   ├── input.tsx
+│   └── modal.tsx
+└── layout/            # 布局相關元件
+    ├── header.tsx
+    └── footer.tsx
+
+hooks/
+├── use-fetch.ts       # 共用的 Hooks
+├── use-modal.ts
+└── use-auth.ts
+
+lib/
+├── utils.ts           # 工具函式
+├── constants/         # 常量定義
+│   ├── api.ts
+│   └── colors.ts
+├── types/             # 型別定義
+│   ├── user.ts
+│   └── product.ts
+└── schemas/           # 資料驗證
+    ├── user.ts
+    └── product.ts
+
+public/
+├── images/            # 靜態圖片資源
+└── ...                # 其他靜態資源
+
+styles/
+├── globals.css        # 全局樣式
+└── ...                # 其他樣式檔案
 ```
 
 ## 主要功能

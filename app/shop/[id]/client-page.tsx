@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { StyleTag } from "@/app/_components/style-tag";
+import { StyleTag } from "@/components/style-tag";
 import { Shop_create_response } from "@/generated/types";
 
 export function ClientPage(shopData: Shop_create_response) {
