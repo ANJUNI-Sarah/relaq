@@ -1,4 +1,4 @@
-import { ListContainer } from "@/features/shop-list/components/list-container";
+import { ListContainer } from "@/features/info/shop-list/components/list-container";
 import {
     Shop_list_create_request,
     Shop_list_create_response,

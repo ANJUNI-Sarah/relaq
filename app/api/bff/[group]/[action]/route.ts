@@ -6,19 +6,21 @@ type BFFParams = {
     action: string;
 };
 
+const getRoute = (param: BFFParams) => bffRoutes[param.group]?.[param.action];
+
+export async function GET(_: NextRequest, { params }: { params: BFFParams }) {
+    const route = getRoute(params);
+    const data = await route.service();
+
+    return NextResponse.json(data);
+}
+
 export async function POST(
     req: NextRequest,
     { params }: { params: BFFParams }
 ) {
-    const { group, action } = params;
-    const route = bffRoutes[group]?.[action];
+    const route = getRoute(params);
+    const data = await route.service(req.json());
 
-    if (route) {
-        console.log("efe");
-        // const payload = await req.json();
-        const data = await route.service();
-        console.log(`BFF Route: ${group}/${action}`, data);
-        return NextResponse.json(data);
-    }
-    return NextResponse.json({ error: "Route not found" }, { status: 404 });
+    return NextResponse.json(data);
 }
