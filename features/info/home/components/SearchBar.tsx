@@ -26,7 +26,7 @@ export const SearchBar = ({ bannerImage }: HomeSearchProps) => {
         const encodedParams = btoa(
             encodeURIComponent(JSON.stringify(searchParams))
         );
-        router.push(`/list?q=${encodedParams}`);
+        router.push(`/shop-list?q=${encodedParams}`);
     };
 
     return (
