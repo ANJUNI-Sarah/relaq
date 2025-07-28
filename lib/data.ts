@@ -21,6 +21,7 @@ export async function fetchHomeData(): Promise<Homepage_list_response> {
                 "Content-Type": "application/json",
             },
             credentials: "include",
+            cache: "no-store",
         }
     );
 
@@ -45,7 +46,7 @@ export async function fetchShopList(
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            cache: "no-cache",
+            cache: "no-store",
             body: JSON.stringify(params),
         }
     );
@@ -71,7 +72,7 @@ export async function fetchShopListClient(
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            cache: "no-cache",
+            cache: "no-store",
             body: JSON.stringify(params),
         }
     );
@@ -97,6 +98,7 @@ export async function fetchShopData(
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
+            cache: "no-store",
         }
     );
 
@@ -121,6 +123,7 @@ export async function fetchArticleList(
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
+            cache: "no-store",
         }
     );
 
@@ -144,6 +147,7 @@ export async function fetchArticleData(
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
+            cache: "no-store",
         }
     );
 

@@ -3,14 +3,13 @@
 import { FeaturedSection } from "@/components/featured-section";
 import { SearchBar } from "@/features/info/home/components/SearchBar";
 import { useInitQuery } from "@/features/info/home/hooks/useInitQuery";
+import Loading from "./loading";
 
 export default function Page() {
     const { data, isLoading, error } = useInitQuery();
 
-    console.log("Page data:", data);
-
     if (isLoading) {
-        return <>Loading</>;
+        return <Loading />;
     }
 
     if (error) {
@@ -19,8 +18,8 @@ export default function Page() {
 
     return (
         <div className="w-full py-6 space-y-8">
-            <SearchBar bannerImage={data.data.data.banner} />
-            <FeaturedSection articles={data.data.data.articles} />
+            <SearchBar bannerImage={data.banner} />
+            <FeaturedSection articles={data.articles} />
         </div>
     );
 }
