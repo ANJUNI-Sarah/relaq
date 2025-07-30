@@ -9,16 +9,26 @@ type BFFParams = {
 const getRoute = (param: BFFParams) => bffRoutes[param.group]?.[param.action];
 
 export async function GET(_: NextRequest, { params }: { params: BFFParams }) {
-    const route = getRoute(params);
-    const data = await route.service();
+    try {
+        const route = getRoute(params);
+        const data = await route.service();
 
-    return NextResponse.json(data);
+        return NextResponse.json(data);
+    } catch (error) {
+        return NextResponse.json({ error: error }, { status: 500 });
+    }
 }
 
 export async function POST(
     req: NextRequest,
     { params }: { params: BFFParams }
 ) {
+    if (!req.body) {
+        return NextResponse.json(
+            { error: "No request body provided" },
+            { status: 400 }
+        );
+    }
     const route = getRoute(params);
     const data = await route.service(req.json());
 

@@ -13,7 +13,7 @@ export default function Page() {
     }
 
     if (error) {
-        throw new Error("暫時無資料，請稍後再試");
+        throw new Error("暫時無資料，請稍後再試", error);
     }
 
     return (
